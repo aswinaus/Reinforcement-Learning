@@ -15,11 +15,11 @@ Update Policy Parameters: The policy is typically parameterized by a set of weig
 Repeat: Steps 1-3 are repeated over many iterations or "epochs" to iteratively improve the policy and maximize the expected cosine similarity reward.
 How the Cosine Similarity Reward Fits in:
 
-Your cosine similarity reward directly serves as the signal that guides the policy update. A higher cosine similarity score for a given question and the resulting retrieved context and answer tells the GRPO algorithm that the "action" (the retrieval and generation process for that question) was good. The algorithm will then adjust its internal parameters to favor similar actions in the future when faced with similar questions.
+The cosine similarity reward directly serves as the signal that guides the policy update. A higher cosine similarity score for a given question and the resulting retrieved context and answer tells the GRPO algorithm that the "action" (the retrieval and generation process for that question) was good. The algorithm will then adjust its internal parameters to favor similar actions in the future when faced with similar questions.
 
-In the context of your notebook:
+In the context of this notebook:
 
-Since you have calculated the cosine_similarity_reward for each question in your dataset, you have the necessary reward signal. To integrate this into a GRPO algorithm, you would need to:
+Since we have calculated the cosine_similarity_reward for each question in the sample dataset, we have the necessary reward signal. To integrate this into a GRPO algorithm, we would need to:
 
 Define your policy network (e.g., a neural network that takes the question as input and outputs the parameters for your RAG system's retrieval and generation).
  
