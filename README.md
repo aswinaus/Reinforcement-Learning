@@ -21,10 +21,10 @@ In the context of this notebook:
 
 Since we have calculated the cosine_similarity_reward for each question in the sample dataset, we have the necessary reward signal. To integrate this into a GRPO algorithm, we would need to:
 
-Define your policy network (e.g., a neural network that takes the question as input and outputs the parameters for your RAG system's retrieval and generation).
+Define the policy network (e.g., a neural network that takes the question as input and outputs the parameters for the RAG system's retrieval and generation).
  
 
-Defining a policy network for your example involves creating a model that can learn to influence the RAG system's actions based on the input question to maximize the cosine similarity reward. This is a more advanced step. Here's a plan to approach this:
+Defining a policy network for the example involves creating a model that can learn to influence the RAG system's actions based on the input question to maximize the cosine similarity reward. This is a more advanced step. Here's a plan to approach this:
 
  
 
@@ -44,7 +44,7 @@ From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Ag
  
 
 Implement the GRPO algorithm's update rule, using the cosine_similarity_reward as the reward signal to adjust the policy network's parameters.
-Set up a training loop where you repeatedly sample questions, get responses from your RAG system, calculate the reward, and update the policy.
+Set up a training loop where repeatedly sample questions, get responses from tge RAG system, calculate the reward, and update the policy.
  
 
 From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>
