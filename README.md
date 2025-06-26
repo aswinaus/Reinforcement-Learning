@@ -3,3 +3,51 @@
 ## Reinforcement Learning with Human Feedback
 ## Direct Policy Optimization(DPO)
 ## Group Relative Policy Optimization(GRPO)
+Group Relative Policy Optimization (GRPO) is a specific algorithm in the family of policy optimization methods. While the exact implementation details of GRPO can vary, the core idea of policy optimization algorithms is to directly adjust the agent's policy (which is a function that maps states to actions) to maximize the expected cumulative reward.
+
+Here's a general idea of how you would typically update the policy directly in a policy optimization algorithm like GRPO, relating it to your situation with the cosine similarity reward:
+
+Collect Experiences: The agent interacts with the environment (in your case, this involves posing a question, the RAG system retrieving contexts and generating an answer, and you calculating the cosine similarity reward) and collects a set of experiences, which usually include the state (the question), the action (the retrieval and generation process), and the reward (the cosine similarity score).
+Estimate Advantage or Gradient: Policy optimization methods often use the concept of advantage or calculate the gradient of the expected reward with respect to the policy parameters.
+Advantage: This measures how much better an action is compared to the average action in a given state. In your case, a higher cosine similarity reward for a particular retrieval/generation process would indicate a higher advantage for that "action."
+Gradient: This indicates the direction in which to change the policy parameters to increase the expected reward.
+Update Policy Parameters: The policy is typically parameterized by a set of weights or parameters (e.g., in a neural network). The algorithm uses the estimated advantage or gradient information to update these parameters. The goal is to shift the policy in a direction that makes actions with higher rewards (like those leading to higher cosine similarity scores) more likely to be chosen in the future. The update rule will involve the learning rate and the calculated gradient or advantage.
+Repeat: Steps 1-3 are repeated over many iterations or "epochs" to iteratively improve the policy and maximize the expected cosine similarity reward.
+How the Cosine Similarity Reward Fits in:
+
+Your cosine similarity reward directly serves as the signal that guides the policy update. A higher cosine similarity score for a given question and the resulting retrieved context and answer tells the GRPO algorithm that the "action" (the retrieval and generation process for that question) was good. The algorithm will then adjust its internal parameters to favor similar actions in the future when faced with similar questions.
+
+In the context of your notebook:
+
+Since you have calculated the cosine_similarity_reward for each question in your dataset, you have the necessary reward signal. To integrate this into a GRPO algorithm, you would need to:
+
+Define your policy network (e.g., a neural network that takes the question as input and outputs the parameters for your RAG system's retrieval and generation).
+ 
+
+Defining a policy network for your example involves creating a model that can learn to influence the RAG system's actions based on the input question to maximize the cosine similarity reward. This is a more advanced step. Here's a plan to approach this:
+
+ 
+
+Understand the role of the policy network: Clarify what aspects of the RAG system the policy network will control (e.g., retrieval parameters, generation parameters, or both).
+Choose a suitable neural network architecture: Select a type of neural network (e.g., a feedforward network, recurrent network, or transformer-based model) that can process the input question and output the control signals for the RAG system.
+Define the input and output layers: Determine the format of the input (the question) and the output (the parameters or actions that influence the RAG system).
+Implement the policy network: Write the code to define the chosen neural network architecture using a deep learning framework (like TensorFlow or PyTorch).
+Integrate the policy network with the rag system: Connect the policy network's output to the relevant parts of your RAG system so that the network's decisions influence the retrieval and generation processes.
+Define the training process: Outline how the policy network will be trained using the cosine similarity reward as the optimization signal, likely involving a policy optimization algorithm like GRPO.
+Finish task: Summarize the policy network definition and its role in optimizing the RAG system's performance based on the cosine similarity reward.
+ 
+
+From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>
+
+ 
+
+ 
+
+Implement the GRPO algorithm's update rule, using the cosine_similarity_reward as the reward signal to adjust the policy network's parameters.
+Set up a training loop where you repeatedly sample questions, get responses from your RAG system, calculate the reward, and update the policy.
+ 
+
+From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>
+
+ 
+
