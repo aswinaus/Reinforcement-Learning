@@ -45,15 +45,11 @@ Since we have calculated the cosine_similarity_reward for each question in the s
 **9.Finish task:** Summarize the policy network definition and its role in optimizing the RAG system's performance based on the cosine similarity reward.
 
 **Implementation:**
-From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>
+From [<https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>](https://github.com/aswinaus/Reinforcement-Learning/blob/main/RAG_RewardFunction_GRPO.ipynb)
 
- 
+**Implement the GRPO algorithm's update rule, using the cosine_similarity_reward as the reward signal to adjust the policy network's parameters.**
 
- 
-
-Implement the GRPO algorithm's update rule, using the cosine_similarity_reward as the reward signal to adjust the policy network's parameters.
 Set up a training loop where repeatedly sample questions, get responses from tge RAG system, calculate the reward, and update the policy.
- 
 
 From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>
 
