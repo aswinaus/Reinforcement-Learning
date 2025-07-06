@@ -28,7 +28,7 @@ Since we have calculated the cosine_similarity_reward for each question in the s
 
 **1.Define the policy network** (e.g., a neural network that takes the question as input and outputs the parameters for the RAG system's retrieval and generation).
 
-**2.Defining a policy network** for the example involves creating a model that can learn to influence the RAG system's actions based on the input question to maximize the cosine similarity reward. This is a more advanced step. Here's a plan to approach this:
+**2.Defining a policy network for this example** involves creating a model that can learn to influence the RAG system's actions based on the input question to maximize the cosine similarity reward. This is a more advanced step. Here's a plan to approach this:
 
 **3.Understand the role of the policy network:** Clarify what aspects of the RAG system the policy network will control (e.g., retrieval parameters, generation parameters, or both).
 
@@ -38,7 +38,7 @@ Since we have calculated the cosine_similarity_reward for each question in the s
 
 **6.Implement the policy network:** Write the code to define the chosen neural network architecture using a deep learning framework (like TensorFlow or PyTorch).
 
-**7.Integrate the policy network with the rag system:** Connect the policy network's output to the relevant parts of your RAG system so that the network's decisions influence the retrieval and generation processes.
+**7.Integrate the policy network with the RAG system:** Connect the policy network's output to the relevant parts of your RAG system so that the network's decisions influence the retrieval and generation processes.
 
 **8.Define the training process:** Outline how the policy network will be trained using the cosine similarity reward as the optimization signal, likely involving a policy optimization algorithm like GRPO.
 
