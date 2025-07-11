@@ -160,7 +160,7 @@ In the context of our RAG training, monitoring the "batch average log variance" 
 
 The "**batch average advantage**" graph  is a crucial metric in policy gradient reinforcement learning. It shows the average "advantage" of the actions taken by the policy within each training batch.
 
-<img width="465" height="382" alt="image" src="https://github.com/user-attachments/assets/582a4c46-e235-45a8-bf43-85698046da87" />
+<img width="1478" height="746" alt="image" src="https://github.com/user-attachments/assets/076cfe92-5ae3-4c1a-b412-3d44668870ab" />
 
 Here's what that means:
 
