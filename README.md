@@ -73,65 +73,81 @@ Yes the Avg Reward is somewhere around 0.3 which needs improvisation.
  <img width="1770" height="786" alt="image" src="https://github.com/user-attachments/assets/a611f9c5-57f6-4fb3-a028-c9931340bd38" />
 
 
-The "**batch policy loss**" graph in Weights & Biases visualizes how the policy network's loss changes over batches during training. In the context of policy gradient methods, which the provided code was attempting to implement, this loss function is typically designed to encourage actions that led to higher rewards and discourage those that led to lower rewards.
+The "**batch policy loss**" graph  visualizes how the policy network's loss changes over batches during training. In the context of policy gradient methods, which the provided code was attempting to implement, this loss function is typically designed to encourage actions that led to higher rewards and discourage those that led to lower rewards.
+
+<img width="447" height="377" alt="image" src="https://github.com/user-attachments/assets/b2ca61ba-e60c-4faf-8f2b-d14952b0d6fa" />
 
 Here's what the graph implies:
 
-Decreasing Loss: A general trend of decreasing batch policy loss indicates that the policy network is learning to adjust its action probabilities (in this case, the predicted similarity_top_k) in a way that is aligned with the observed rewards. The network is becoming better at selecting actions that maximize the expected future reward.
+**Decreasing Loss:** A general trend of decreasing batch policy loss indicates that the policy network is learning to adjust its action probabilities (in this case, the predicted similarity_top_k) in a way that is aligned with the observed rewards. The network is becoming better at selecting actions that maximize the expected future reward.
 
-Fluctuations: It's common to see fluctuations in the batch policy loss, especially with smaller batch sizes. This is because each batch provides a noisy estimate of the true gradient of the policy's expected reward. The policy is updated based on this noisy estimate, which can lead to variations in the loss from batch to batch.
+**Fluctuations:** It's common to see fluctuations in the batch policy loss, especially with smaller batch sizes. This is because each batch provides a noisy estimate of the true gradient of the policy's expected reward. The policy is updated based on this noisy estimate, which can lead to variations in the loss from batch to batch.
 
-Magnitude of Loss: The absolute value of the loss isn't as important as its trend. A large negative loss (or a small positive loss, depending on the loss function definition) generally indicates that the current policy update is leading to a significant improvement in expected reward for that batch.
+**Magnitude of Loss:** The absolute value of the loss isn't as important as its trend. A large negative loss (or a small positive loss, depending on the loss function definition) generally indicates that the current policy update is leading to a significant improvement in expected reward for that batch.
 Policy Updates: Each point on the graph represents the policy loss calculated for a specific batch, immediately before the policy network's weights are updated based on that loss.
 
 In summary, the batch policy loss graph helps you monitor whether your reinforcement learning policy is learning effectively. A downward trend suggests successful learning, while a stagnant or increasing trend might indicate issues with hyperparameters, the reward function, or the network architecture.
 
 
-The "**batch average reward**" graph in Weights & Biases shows the average reward obtained within each training batch. In the context of the code we were working with, the reward was calculated using cosine similarity between the generated answer from the RAG system (using the predicted similarity_top_k) and the ground truth answer for each question in the batch.
+The "**batch average reward**" graph  shows the average reward obtained within each training batch. In the context of the code we were working with, the reward was calculated using cosine similarity between the generated answer from the RAG system (using the predicted similarity_top_k) and the ground truth answer for each question in the batch.
+
+<img width="452" height="377" alt="image" src="https://github.com/user-attachments/assets/507458d8-d77e-4a2d-bc70-cf38e925e61b" />
+
 
 Here's what the graph implies:
 
-Increasing Reward: A general trend of increasing batch average reward indicates that the policy network is learning to select similarity_top_k values that lead to RAG generated answers that are more similar (higher cosine similarity) to the ground truth answers. This is a positive sign, suggesting the policy is improving the RAG system's performance on your training data.
+**Increasing Reward:** A general trend of increasing batch average reward indicates that the policy network is learning to select similarity_top_k values that lead to RAG generated answers that are more similar (higher cosine similarity) to the ground truth answers. This is a positive sign, suggesting the policy is improving the RAG system's performance on your training data.
 
-Fluctuations: Similar to the policy loss, you might see fluctuations in the batch average reward. This is natural due to the variability in the questions within each batch and the inherent randomness in the sampling of similarity_top_k from the policy network's distribution.
+**Fluctuations:** Similar to the policy loss, you might see fluctuations in the batch average reward. This is natural due to the variability in the questions within each batch and the inherent randomness in the sampling of similarity_top_k from the policy network's distribution.
 Magnitude of Reward: The actual value of the average reward is directly interpretable as the average cosine similarity score for the batch. A score closer to 1 indicates higher similarity and better performance for that batch.
 
-Correlation with Loss: Ideally, as the batch average reward increases, you should see a corresponding decrease in the batch policy loss (or a trend towards a more favorable loss value, depending on the exact loss function). This is because the policy is being updated to favor actions that result in higher rewards.
+**Correlation with Loss:** Ideally, as the batch average reward increases, you should see a corresponding decrease in the batch policy loss (or a trend towards a more favorable loss value, depending on the exact loss function). This is because the policy is being updated to favor actions that result in higher rewards.
 
 **In essence, the batch average reward graph is a direct measure of your RAG system's performance on the training data under the control of the learned policy. It's a key metric to track to understand if your reinforcement learning approach is effectively improving the RAG's ability to generate relevant answers by adjusting the number of retrieved documents.
 **
 
 
-The "**batch average predicted top k**" graph in Weights & Biases tracks the average value of the similarity_top_k parameter that the policy network predicted for the questions within each batch during training.
+The "**batch average predicted top k**" graph  tracks the average value of the similarity_top_k parameter that the policy network predicted for the questions within each batch during training.
+
+<img width="467" height="386" alt="image" src="https://github.com/user-attachments/assets/7c4c58df-3b1d-41bc-b4e0-5e2494d9e18b" />
+
 
 Here's what this graph implies:
 
-Policy's Action: This graph directly visualizes the action that your reinforcement learning policy is taking. The policy network outputs a mean and log-variance for a distribution (specifically, a Normal distribution in the code), and the similarity_top_k value is sampled from this distribution (and then processed to be a positive integer). The graph shows the average of these sampled and processed similarity_top_k values across a batch.
+**Policy's Action:** This graph directly visualizes the action that your reinforcement learning policy is taking. The policy network outputs a mean and log-variance for a distribution (specifically, a Normal distribution in the code), and the similarity_top_k value is sampled from this distribution (and then processed to be a positive integer). The graph shows the average of these sampled and processed similarity_top_k values across a batch.
 
-Learning Trend: As the training progresses, the trend in the "batch average predicted top k" can tell you how the policy is learning to adjust the retrieval size based on the feedback (reward) it receives.
-If the average predicted top_k is increasing, it might suggest the policy is finding that retrieving more documents generally leads to better rewards for the types of questions in the training data.
+**Learning Trend:** As the training progresses, the trend in the "batch average predicted top k" can tell you how the policy is learning to adjust the retrieval size based on the feedback (reward) it receives.
+
+If the average predicted top_k is increasing, it might suggest the policy is finding that retrieving more documents generally leads to better rewards for the 
+types of questions in the training data.
+
 If it's decreasing, the policy might be learning that retrieving fewer documents is more beneficial, perhaps because it reduces noise or improves the language model's ability to synthesize the answer.
+
 If it fluctuates around a certain value, the policy might have converged on a preferred range for top_k.
 
-Variability (Related to Log Variance): While this graph shows the average predicted top_k, the variability in the policy's predictions within and across batches is also important. The log-variance output of the policy network influences this variability. A decreasing trend in the log-variance (which wasn't directly logged but is an internal state of the policy) would correspond to the policy becoming more confident in its top_k predictions, potentially leading to less fluctuation in this "batch average predicted top k" graph over time.
+**Variability (Related to Log Variance):** While this graph shows the average predicted top_k, the variability in the policy's predictions within and across batches is also important. The log-variance output of the policy network influences this variability. A decreasing trend in the log-variance (which wasn't directly logged but is an internal state of the policy) would correspond to the policy becoming more confident in its top_k predictions, potentially leading to less fluctuation in this "batch average predicted top k" graph over time.
 
-Relationship with Reward: You should analyze this graph in conjunction with the "batch average reward" graph. The policy's goal is to adjust the predicted top_k (shown in this graph) to maximize the average reward (shown in the other graph). Observing how the trends in these two graphs correlate is crucial for understanding the learning process.
+**Relationship with Reward:** You should analyze this graph in conjunction with the "batch average reward" graph. The policy's goal is to adjust the predicted top_k (shown in this graph) to maximize the average reward (shown in the other graph). Observing how the trends in these two graphs correlate is crucial for understanding the learning process.
 
 In essence, this graph provides insight into the policy network's behavior and how it's learning to control the retrieval step of your RAG system based on the training signal.
 
 
-The "batch average log variance" graph in Weights & Biases shows the average value of the logarithm of the variance predicted by the policy network for the similarity_top_k action, averaged across the questions in each batch.
+The "batch average log variance" graph  shows the average value of the logarithm of the variance predicted by the policy network for the similarity_top_k action, averaged across the questions in each batch.
+
+<img width="461" height="383" alt="image" src="https://github.com/user-attachments/assets/7267efc8-135b-4aad-b5ca-00636fe6e8b7" />
 
 Here's a breakdown:
 
-Policy Output: Our policy network outputs two values for each question: a mean and a log-variance. These define a Normal distribution from which the continuous similarity_top_k is sampled.
+**Policy Output:** Our policy network outputs two values for each question: a mean and a log-variance. These define a Normal distribution from which the continuous similarity_top_k is sampled.
 
-Variance and Log Variance: The variance (or standard deviation) represents the spread or uncertainty of this distribution. Log variance is simply the logarithm of the variance. Using log variance is common in neural networks because it ensures the predicted variance is always positive.
+**Variance and Log Variance:** The variance (or standard deviation) represents the spread or uncertainty of this distribution. Log variance is simply the logarithm of the variance. Using log variance is common in neural networks because it ensures the predicted variance is always positive.
 
-What the Graph Shows: The "batch average log variance" graph plots the average of these log-variance values for all the questions within a single training batch.
+**What the Graph Shows:** The "batch average log variance" graph plots the average of these log-variance values for all the questions within a single training batch.
+
 What the graph implies:
+<img width="461" height="383" alt="image" src="https://github.com/user-attachments/assets/96c07862-126e-4b4d-9c33-5db0ee6776a0" />
 
-Policy Confidence/Exploration: The log variance is a measure of the policy's uncertainty or how much it's "**exploring**" different similarity_top_k values.
+**Policy Confidence/Exploration:** The log variance is a measure of the policy's uncertainty or how much it's "**exploring**" different similarity_top_k values.
 
 Decreasing Log Variance: A downward trend in this graph typically means the policy is becoming more confident in its predictions for similarity_top_k. It's narrowing the distribution from which it samples actions, suggesting it has found a more optimal range of top_k values for the training questions. This is generally a sign of convergence.
 
@@ -141,27 +157,35 @@ Trade-off between Exploration and Exploitation: In reinforcement learning, there
 
 In the context of our RAG training, monitoring the "batch average log variance" helps you see if your policy is settling on a preferred similarity_top_k strategy or if it's still uncertain. Ideally, you'd expect it to decrease over time as the policy learns which top_k values yield better rewards.
 
-The "batch average advantage" graph in Weights & Biases is a crucial metric in policy gradient reinforcement learning. It shows the average "advantage" of the actions taken by the policy within each training batch.
+The "batch average advantage" graph  is a crucial metric in policy gradient reinforcement learning. It shows the average "advantage" of the actions taken by the policy within each training batch.
+
+<img width="465" height="382" alt="image" src="https://github.com/user-attachments/assets/582a4c46-e235-45a8-bf43-85698046da87" />
 
 Here's what that means:
 
-Reward vs. Baseline: In policy gradient methods, we don't just look at the raw reward. We compare the reward obtained for a specific action to a baseline. The baseline is an estimate of the expected reward for the current state (or in our case, for the given question). It helps reduce the variance of the gradient estimates, making training more stable.
+**Reward vs. Baseline:** In policy gradient methods, we don't just look at the raw reward. We compare the reward obtained for a specific action to a baseline. The baseline is an estimate of the expected reward for the current state (or in our case, for the given question). It helps reduce the variance of the gradient estimates, making training more stable.
 
-Advantage: The advantage is calculated as the difference between the actual reward received for an action and the baseline: 
+**Advantage:** The advantage is calculated as the difference between the actual reward received for an action and the baseline: 
+
+
                                                **Advantage = Actual Reward - Baseline.**
+
+                                               
 A positive advantage means the action taken resulted in a better-than-expected reward.
+
 A negative advantage means the action taken resulted in a worse-than-expected reward.
 
-Batch Average Advantage: The graph plots the average of these advantage values for all the (question, sampled top_k, reward) triplets within a single training batch.
+
+**Batch Average Advantage:** The graph plots the average of these advantage values for all the (question, sampled top_k, reward) triplets within a single training batch.
 
 What the graph implies:
 
-Signal for Policy Update: The advantage is the signal used to update the policy network. The policy is trained to increase the probability of actions that had a positive advantage and decrease the probability of actions that had a negative advantage.
+**Signal for Policy Update:** The advantage is the signal used to update the policy network. The policy is trained to increase the probability of actions that had a positive advantage and decrease the probability of actions that had a negative advantage.
 
 **Trend Towards Zero (Often):** As the policy learns and the baseline becomes a better predictor of the expected reward, the average advantage for a batch will often tend towards zero. This means the policy is consistently choosing actions that yield rewards close to what is expected, and the baseline is accurately reflecting that expectation.
 
-Correlation with Policy Loss: The policy loss is directly calculated using the advantage. A large positive or negative average advantage for a batch will typically correspond to a larger magnitude of policy loss for that batch, as the network gets a strong signal to adjust its probabilities.
+**Correlation with Policy Loss:** The policy loss is directly calculated using the advantage. A large positive or negative average advantage for a batch will typically correspond to a larger magnitude of policy loss for that batch, as the network gets a strong signal to adjust its probabilities.
 
-Training Stability: Monitoring the stability of the average advantage can provide insights into the training process. Extreme fluctuations might suggest an unstable baseline or issues with the reward signal.
+**Training Stability:** Monitoring the stability of the average advantage can provide insights into the training process. Extreme fluctuations might suggest an unstable baseline or issues with the reward signal.
 
 In the context of our RAG training, the "batch average advantage" tells us how much the retrieved context (based on the policy's chosen top_k) led to a generated answer that was better or worse than the average expected answer similarity for that batch. The policy uses this signal to learn which top_k values are more likely to result in high-similarity answers.
