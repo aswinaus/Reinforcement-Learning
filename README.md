@@ -53,5 +53,19 @@ Set up a training loop where repeatedly sample questions, get responses from tge
 
 From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Agent_RewardFunction_CosineSimilarity_GroundTruth.ipynb?pli=1#scrollTo=wtwCsHlESzC0>
 
- 
+**Weights & Biases dashboard**
+
+**Source:**
+https://github.com/aswinaus/Reinforcement-Learning/blob/main/RAG_RewardFunction_GRPO_W%26B.ipynb
+
+**Highlights:**
+1.Visualized the logged metrics in the Weights & Biases dashboard to analyze trends, identify correlations between metrics (e.g., reward and predicted top_k), and diagnose potential training issues such as instability or convergence problems.
+2. Implement the actual RAG system reward calculation to replace the dummy reward function in the previons version of code, allowing the policy to learn based on real retrieval performance.
+
+Yes the Avg Reward is somewhere around 0.3 which needs improvisation.
+
+<img width="1768" height="790" alt="image" src="https://github.com/user-attachments/assets/07fb0973-717f-496e-b01a-ae9eed504dff" />
+
+ <img width="1770" height="786" alt="image" src="https://github.com/user-attachments/assets/a611f9c5-57f6-4fb3-a028-c9931340bd38" />
+
 
