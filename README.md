@@ -75,7 +75,7 @@ Yes the Avg Reward is somewhere around 0.3 which needs improvisation.
 
 The "**batch policy loss**" graph  visualizes how the policy network's loss changes over batches during training. In the context of policy gradient methods, which the provided code was attempting to implement, this loss function is typically designed to encourage actions that led to higher rewards and discourage those that led to lower rewards.
 
-<img width="466" height="392" alt="image" src="https://github.com/user-attachments/assets/537302dd-7075-472f-a8db-ff04387f6b77" />
+<img width="472" height="391" alt="image" src="https://github.com/user-attachments/assets/59668c35-dd2b-482a-a4b5-c725575dce3f" />
 
 Here's what the graph implies:
 
