@@ -75,7 +75,7 @@ Yes the Avg Reward is somewhere around 0.3 which needs improvisation.
 
 The "**batch policy loss**" graph  visualizes how the policy network's loss changes over batches during training. In the context of policy gradient methods, which the provided code was attempting to implement, this loss function is typically designed to encourage actions that led to higher rewards and discourage those that led to lower rewards.
 
-<img width="472" height="391" alt="image" src="https://github.com/user-attachments/assets/59668c35-dd2b-482a-a4b5-c725575dce3f" />
+<img width="1436" height="741" alt="image" src="https://github.com/user-attachments/assets/0b8305fe-31f9-469e-9151-afbb71218176" />
 
 Here's what the graph implies:
 
@@ -91,8 +91,7 @@ In summary, the batch policy loss graph helps you monitor whether your reinforce
 
 The "**batch average reward**" graph  shows the average reward obtained within each training batch. In the context of the code we were working with, the reward was calculated using cosine similarity between the generated answer from the RAG system (using the predicted similarity_top_k) and the ground truth answer for each question in the batch.
 
-<img width="452" height="377" alt="image" src="https://github.com/user-attachments/assets/507458d8-d77e-4a2d-bc70-cf38e925e61b" />
-
+<img width="1476" height="733" alt="image" src="https://github.com/user-attachments/assets/e4b75f7d-2e1b-4099-8ce4-45b18c6b3f63" />
 
 Here's what the graph implies:
 
@@ -109,7 +108,7 @@ Magnitude of Reward: The actual value of the average reward is directly interpre
 
 The "**batch average predicted top k**" graph  tracks the average value of the similarity_top_k parameter that the policy network predicted for the questions within each batch during training.
 
-<img width="467" height="386" alt="image" src="https://github.com/user-attachments/assets/7c4c58df-3b1d-41bc-b4e0-5e2494d9e18b" />
+<img width="1471" height="742" alt="image" src="https://github.com/user-attachments/assets/ba7abef2-8e9a-48ab-ab20-d4e3ed6e8d4b" />
 
 
 Here's what this graph implies:
@@ -134,7 +133,8 @@ In essence, this graph provides insight into the policy network's behavior and h
 
 The "**batch average log variance**" graph  shows the average value of the logarithm of the variance predicted by the policy network for the similarity_top_k action, averaged across the questions in each batch.
 
-<img width="461" height="383" alt="image" src="https://github.com/user-attachments/assets/7267efc8-135b-4aad-b5ca-00636fe6e8b7" />
+<img width="1460" height="751" alt="image" src="https://github.com/user-attachments/assets/c5e0da93-db10-48a4-88aa-b3bfea427ca2" />
+
 
 Here's a breakdown:
 
@@ -145,6 +145,7 @@ Here's a breakdown:
 **What the Graph Shows:** The "batch average log variance" graph plots the average of these log-variance values for all the questions within a single training batch.
 
 What the graph implies:
+
 <img width="461" height="383" alt="image" src="https://github.com/user-attachments/assets/96c07862-126e-4b4d-9c33-5db0ee6776a0" />
 
 **Policy Confidence/Exploration:** The log variance is a measure of the policy's uncertainty or how much it's "**exploring**" different similarity_top_k values.
