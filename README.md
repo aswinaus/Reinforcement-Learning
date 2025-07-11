@@ -75,7 +75,7 @@ Yes the Avg Reward is somewhere around 0.3 which needs improvisation.
 
 The "**batch policy loss**" graph  visualizes how the policy network's loss changes over batches during training. In the context of policy gradient methods, which the provided code was attempting to implement, this loss function is typically designed to encourage actions that led to higher rewards and discourage those that led to lower rewards.
 
-<img width="447" height="377" alt="image" src="https://github.com/user-attachments/assets/b2ca61ba-e60c-4faf-8f2b-d14952b0d6fa" />
+<img width="466" height="392" alt="image" src="https://github.com/user-attachments/assets/537302dd-7075-472f-a8db-ff04387f6b77" />
 
 Here's what the graph implies:
 
@@ -132,7 +132,7 @@ If it fluctuates around a certain value, the policy might have converged on a pr
 In essence, this graph provides insight into the policy network's behavior and how it's learning to control the retrieval step of your RAG system based on the training signal.
 
 
-The "batch average log variance" graph  shows the average value of the logarithm of the variance predicted by the policy network for the similarity_top_k action, averaged across the questions in each batch.
+The "**batch average log variance**" graph  shows the average value of the logarithm of the variance predicted by the policy network for the similarity_top_k action, averaged across the questions in each batch.
 
 <img width="461" height="383" alt="image" src="https://github.com/user-attachments/assets/7267efc8-135b-4aad-b5ca-00636fe6e8b7" />
 
@@ -157,7 +157,7 @@ Trade-off between Exploration and Exploitation: In reinforcement learning, there
 
 In the context of our RAG training, monitoring the "batch average log variance" helps you see if your policy is settling on a preferred similarity_top_k strategy or if it's still uncertain. Ideally, you'd expect it to decrease over time as the policy learns which top_k values yield better rewards.
 
-The "batch average advantage" graph  is a crucial metric in policy gradient reinforcement learning. It shows the average "advantage" of the actions taken by the policy within each training batch.
+The "**batch average advantage**" graph  is a crucial metric in policy gradient reinforcement learning. It shows the average "advantage" of the actions taken by the policy within each training batch.
 
 <img width="465" height="382" alt="image" src="https://github.com/user-attachments/assets/582a4c46-e235-45a8-bf43-85698046da87" />
 
