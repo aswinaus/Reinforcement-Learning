@@ -55,6 +55,10 @@ From <https://colab.research.google.com/github/aswinaus/Assignments/blob/main/Ag
 
 **Weights & Biases dashboard**
 
+**Report:**
+https://api.wandb.ai/links/aswinaus-hexaware-technologies/icdaxfw5
+
+
 **Source:**
 https://github.com/aswinaus/Reinforcement-Learning/blob/main/RAG_RewardFunction_GRPO_W%26B.ipynb
 
