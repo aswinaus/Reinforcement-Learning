@@ -73,3 +73,35 @@ Yes the Avg Reward is somewhere around 0.3 which needs improvisation.
  <img width="1770" height="786" alt="image" src="https://github.com/user-attachments/assets/a611f9c5-57f6-4fb3-a028-c9931340bd38" />
 
 
+The "batch policy loss" graph in Weights & Biases visualizes how the policy network's loss changes over batches during training. In the context of policy gradient methods, which the provided code was attempting to implement, this loss function is typically designed to encourage actions that led to higher rewards and discourage those that led to lower rewards.
+
+Here's what the graph implies:
+
+Decreasing Loss: A general trend of decreasing batch policy loss indicates that the policy network is learning to adjust its action probabilities (in this case, the predicted similarity_top_k) in a way that is aligned with the observed rewards. The network is becoming better at selecting actions that maximize the expected future reward.
+Fluctuations: It's common to see fluctuations in the batch policy loss, especially with smaller batch sizes. This is because each batch provides a noisy estimate of the true gradient of the policy's expected reward. The policy is updated based on this noisy estimate, which can lead to variations in the loss from batch to batch.
+Magnitude of Loss: The absolute value of the loss isn't as important as its trend. A large negative loss (or a small positive loss, depending on the loss function definition) generally indicates that the current policy update is leading to a significant improvement in expected reward for that batch.
+Policy Updates: Each point on the graph represents the policy loss calculated for a specific batch, immediately before the policy network's weights are updated based on that loss.
+In summary, the batch policy loss graph helps you monitor whether your reinforcement learning policy is learning effectively. A downward trend suggests successful learning, while a stagnant or increasing trend might indicate issues with hyperparameters, the reward function, or the network architecture.
+
+The "batch average reward" graph in Weights & Biases shows the average reward obtained within each training batch. In the context of the code we were working with, the reward was calculated using cosine similarity between the generated answer from the RAG system (using the predicted similarity_top_k) and the ground truth answer for each question in the batch.
+
+Here's what the graph implies:
+
+Increasing Reward: A general trend of increasing batch average reward indicates that the policy network is learning to select similarity_top_k values that lead to RAG generated answers that are more similar (higher cosine similarity) to the ground truth answers. This is a positive sign, suggesting the policy is improving the RAG system's performance on your training data.
+Fluctuations: Similar to the policy loss, you might see fluctuations in the batch average reward. This is natural due to the variability in the questions within each batch and the inherent randomness in the sampling of similarity_top_k from the policy network's distribution.
+Magnitude of Reward: The actual value of the average reward is directly interpretable as the average cosine similarity score for the batch. A score closer to 1 indicates higher similarity and better performance for that batch.
+Correlation with Loss: Ideally, as the batch average reward increases, you should see a corresponding decrease in the batch policy loss (or a trend towards a more favorable loss value, depending on the exact loss function). This is because the policy is being updated to favor actions that result in higher rewards.
+In essence, the batch average reward graph is a direct measure of your RAG system's performance on the training data under the control of the learned policy. It's a key metric to track to understand if your reinforcement learning approach is effectively improving the RAG's ability to generate relevant answers by adjusting the number of retrieved documents.
+
+The "batch average predicted top k" graph in Weights & Biases tracks the average value of the similarity_top_k parameter that the policy network predicted for the questions within each batch during training.
+
+Here's what this graph implies:
+
+Policy's Action: This graph directly visualizes the action that your reinforcement learning policy is taking. The policy network outputs a mean and log-variance for a distribution (specifically, a Normal distribution in the code), and the similarity_top_k value is sampled from this distribution (and then processed to be a positive integer). The graph shows the average of these sampled and processed similarity_top_k values across a batch.
+Learning Trend: As the training progresses, the trend in the "batch average predicted top k" can tell you how the policy is learning to adjust the retrieval size based on the feedback (reward) it receives.
+If the average predicted top_k is increasing, it might suggest the policy is finding that retrieving more documents generally leads to better rewards for the types of questions in the training data.
+If it's decreasing, the policy might be learning that retrieving fewer documents is more beneficial, perhaps because it reduces noise or improves the language model's ability to synthesize the answer.
+If it fluctuates around a certain value, the policy might have converged on a preferred range for top_k.
+Variability (Related to Log Variance): While this graph shows the average predicted top_k, the variability in the policy's predictions within and across batches is also important. The log-variance output of the policy network influences this variability. A decreasing trend in the log-variance (which wasn't directly logged but is an internal state of the policy) would correspond to the policy becoming more confident in its top_k predictions, potentially leading to less fluctuation in this "batch average predicted top k" graph over time.
+Relationship with Reward: You should analyze this graph in conjunction with the "batch average reward" graph. The policy's goal is to adjust the predicted top_k (shown in this graph) to maximize the average reward (shown in the other graph). Observing how the trends in these two graphs correlate is crucial for understanding the learning process.
+In essence, this graph provides insight into the policy network's behavior and how it's learning to control the retrieval step of your RAG system based on the training signal.
