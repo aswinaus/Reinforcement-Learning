@@ -136,7 +136,7 @@ The "**batch average log variance**" graph  shows the average value of the logar
 <img width="1460" height="751" alt="image" src="https://github.com/user-attachments/assets/c5e0da93-db10-48a4-88aa-b3bfea427ca2" />
 
 
-Here's a breakdown:
+Here's what the graph implies:
 
 **Policy Output:** Our policy network outputs two values for each question: a mean and a log-variance. These define a Normal distribution from which the continuous similarity_top_k is sampled.
 
