@@ -15,7 +15,7 @@ Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden u
 **Source:** [https://colab.research.google.com/drive/1kFCflChjvyRtiIxh9YIKWh4IrP3Qa5Iy#scrollTo=rddIp8x3Vh8r](https://github.com/aswinaus/Reinforcement-Learning/blob/main/Intrinsic_Dimension_Estimate.ipynb)
 
 
-#### Algorithms for Reinforcement Learning
+## Algorithms for Reinforcement Learning
 
 
 ## Reinforcement Learning with Human Feedback
