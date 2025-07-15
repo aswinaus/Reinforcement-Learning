@@ -1,8 +1,19 @@
 # Reinforcement Learning
 
 **Intrinsic Dimension**:
+
+**What Are Intrinsic Dimensions?​**
+Intrinsic dimensions refer to the smallest number of parameters needed for a machine learning model to perform well. Instead of assuming every parameter is equally important, this idea suggests that only a carefully chosen subset really matters for optimal results.​
+**Why Intrinsic Dimensions Matter:**
+**Efficiency:** By focusing only on the most important parameters, models can train faster and use less computing power—especially valuable when working with massive models like large language models (LLMs).​
+**Better Fine-Tuning:** Large models that have already been pre-trained are easier to fine-tune because their intrinsic dimension is already reduced. This means they can adapt to new tasks using less data.​
+**LoRA Technology:** The concept of intrinsic dimensions is also the foundation of Low-Rank Domain Adaptation (LoRA), a method that adapts LLMs to specific tasks or domains quickly and efficiently—without needing tons of new data. Just pay attention to this concept as this will be used later in calculating loss in GRPO Policy Model. **Ref:** https://github.com/aswinaus/Reinforcement-Learning/blob/main/Important_Calculating_Loss_in_GRPO.ipynb
+
+**Practice:**
 Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden units → 10 output units (digits 0–9) on MNIST dataset of handwritten digits, commonly used for classification Each image is 28×28 pixels, grayscale in random low-dimensional subspaces t’s the core idea behind intrinsic dimension. We compute the gradient of the loss with respect to all parameters (e.g., 100,000+ weights).Then you update each parameter individually using the gradient (standard SGD or Adam). But here’s what we do differently to measure models intrinsic dimensionality — how many directions in weight space are truly needed to learn the task. We measure test accuracy at various subspace sizes. Plots Accuracy vs Subspace Dimension — giving a rough estimate of intrinsic dimensionality. Instead of Updating parameters in the full-dimensional space (e.g., all 100,000 directions) we pick a random subset of directions (say just 1,000) and only allow weight updates in that subspace. And how we do it we generate a random projection matrix it maps gradients to and from a smaller-dimensional space. ink of it as Compressing the gradient → updating in this compressed space → projecting back to update the full weights. This means we're training the model as if it only had 1,000 degrees of freedom, not 100,000 and the reason doing this is to test how many directions (dimensions) are actually needed to train the model well and As we increase the size of the subspace, performance improves until it plateaus. The point where performance kicks in is a proxy for the intrinsic dimension the number of directions that actually matter for learning.
-https://colab.research.google.com/drive/1kFCflChjvyRtiIxh9YIKWh4IrP3Qa5Iy#scrollTo=rddIp8x3Vh8r
+
+**Source:** [https://colab.research.google.com/drive/1kFCflChjvyRtiIxh9YIKWh4IrP3Qa5Iy#scrollTo=rddIp8x3Vh8r](https://github.com/aswinaus/Reinforcement-Learning/blob/main/Intrinsic_Dimension_Estimate.ipynb)
+
 ## Reinforcement Learning with Human Feedback
 ## Direct Policy Optimization(DPO)
 ## Group Relative Policy Optimization(GRPO)
