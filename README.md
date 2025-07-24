@@ -1,6 +1,6 @@
 # Reinforcement Learning
 
-**Intrinsic Dimension**:
+**Intrinsic Dimensions**:
 
 **What are Intrinsic Dimensions?​**
 
