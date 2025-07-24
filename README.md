@@ -3,6 +3,7 @@
 **Intrinsic Dimension**:
 
 **What are Intrinsic Dimensions?​**
+
 Intrinsic dimensions refer to the smallest number of parameters needed for a machine learning model to perform well. Instead of assuming every parameter is equally important, this idea suggests that only a carefully chosen subset really matters for optimal results.​
 
 **Why Intrinsic Dimensions Matter?**
