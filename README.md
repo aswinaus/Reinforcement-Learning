@@ -8,7 +8,6 @@ Intrinsic dimensions refer to the smallest number of parameters needed for a mac
 
 **Why Intrinsic Dimensions matter?**
 
-
 **Efficiency:** By focusing only on the most important parameters, models can train faster and use less computing power—especially valuable when working with massive models like large language models (LLMs).​
 
 **Better Fine-Tuning:** Large models that have already been pre-trained are easier to fine-tune because their intrinsic dimension is already reduced. This means they can adapt to new tasks using less data.​
@@ -26,14 +25,18 @@ Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden u
 
 ## Reinforcement Learning with Human Feedback
 ## Direct Policy Optimization(DPO)
+
 ## Group Relative Policy Optimization(GRPO)
+
 Group Relative Policy Optimization (GRPO) is a specific algorithm in the family of policy optimization methods. While the exact implementation details of GRPO can vary, the core idea of policy optimization algorithms is to directly adjust the agent's policy (which is a function that maps states to actions) to maximize the expected cumulative reward.
 
-Here's a general idea of how you would typically update the policy directly in a policy optimization algorithm like GRPO, relating it to your situation with the cosine similarity reward:
+Here is a general idea of how we would typically update the policy directly in a policy optimization algorithm like GRPO, relating it to your situation with the cosine similarity reward:
 
 Collect Experiences: The agent interacts with the environment (in this case, this involves posing a question, the RAG system retrieving contexts and generating an answer, and calculating the cosine similarity reward) and collects a set of experiences, which usually include the state (the question), the action (the retrieval and generation process), and the reward (the cosine similarity score).
 
-**Estimate Advantage or Gradient:** Policy optimization methods often use the concept of advantage or calculate the gradient of the expected reward with respect to the policy parameters.
+**Estimate Advantage or Gradient:** 
+
+Policy optimization methods often use the concept of advantage or calculate the gradient of the expected reward with respect to the policy parameters.
 
 Advantage: This measures how much better an action is compared to the average action in a given state. In this case, a higher cosine similarity reward for a particular retrieval/generation process would indicate a higher advantage for that "action."
 
