@@ -125,7 +125,9 @@ Here's what the graph implies:
 **Increasing Reward:** A general trend of increasing batch average reward indicates that the policy network is learning to select similarity_top_k values that lead to RAG generated answers that are more similar (higher cosine similarity) to the ground truth answers. This is a positive sign, suggesting the policy is improving the RAG system's performance on your training data.
 
 **Fluctuations:** Similar to the policy loss, you might see fluctuations in the batch average reward. This is natural due to the variability in the questions within each batch and the inherent randomness in the sampling of similarity_top_k from the policy network's distribution.
-Magnitude of Reward: The actual value of the average reward is directly interpretable as the average cosine similarity score for the batch. A score closer to 1 indicates higher similarity and better performance for that batch.
+
+Magnitude of Reward:
+The actual value of the average reward is directly interpretable as the average cosine similarity score for the batch. A score closer to 1 indicates higher similarity and better performance for that batch.
 
 **Correlation with Loss:** Ideally, as the batch average reward increases, you should see a corresponding decrease in the batch policy loss (or a trend towards a more favorable loss value, depending on the exact loss function). This is because the policy is being updated to favor actions that result in higher rewards.
 
