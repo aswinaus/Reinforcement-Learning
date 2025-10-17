@@ -9,9 +9,7 @@ Intrinsic dimensions refer to the smallest number of parameters needed for a mac
 **Why Intrinsic Dimensions matter?**
 
 **Efficiency:** By focusing only on the most important parameters, models can train faster and use less computing power—especially valuable when working with massive models like large language models (LLMs).​
-
 **Better Fine-Tuning:** Large models that have already been pre-trained are easier to fine-tune because their intrinsic dimension is already reduced. This means they can adapt to new tasks using less data.​
-
 **LoRA Technology:** The concept of intrinsic dimensions is also the foundation of Low-Rank Domain Adaptation (LoRA), a method that adapts LLMs to specific tasks or domains quickly and efficiently—without needing tons of new data. Just pay attention to this concept as this will be used later in calculating loss in GRPO Policy Model. **Ref:** https://github.com/aswinaus/Reinforcement-Learning/blob/main/Important_Calculating_Loss_in_GRPO.ipynb
 
 **Practice:**
