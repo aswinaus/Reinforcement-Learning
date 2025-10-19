@@ -13,6 +13,7 @@ Intrinsic dimensions refer to the smallest number of parameters needed for a mac
 **Better Fine-Tuning:** Large models that have already been pre-trained are easier to fine-tune because their intrinsic dimension is already reduced. This means they can adapt to new tasks using less data.​
 
 **LoRA Technology:** The concept of intrinsic dimensions is also the foundation of Low-Rank Domain Adaptation (LoRA), a method that adapts LLMs to specific tasks or domains quickly and efficiently—without needing tons of new data. “Instead of retraining the whole model, insert a small number of trainable matrices inside it that learn how to adapt to your domain — while keeping the base model frozen. So we don’t touch the original GPT weights — we inject lightweight layers (low-rank matrices) into key parts of the network (typically attention projections).
+
 **Explanation of the flow:**
 Before Injection: The Transformer layer has its standard linear → activation path.
 
@@ -23,6 +24,15 @@ Only the LoRA weights are trained, while the base GPT weights stay frozen.
 The RL loop computes a reward signal (e.g., classification accuracy, helpfulness, domain fit) and uses it to update LoRA adapters — not the full model.
 
 This way, you adapt the model to your domain using very few trainable parameters, keeping compute and cost low while achieving strong task specialization.
+
+Typical versioned model lifecycle
+
+| Phase                       | Environment | Model              | Status                                     |
+| --------------------------- | ----------- | ------------------ | -------------------------------------------|
+| Initial fine-tune           | Dev         | `gpt-4.0-aswin`    | Training active  (LoRA A,B matrices)(Transfer Pricing)           |
+| Inference                   | Prod        | `gpt-4.0-aswin`    | Frozen (read-only) (LoRA adapters)                         |
+| Retraining (6 months later) | Non-Prod    | `gpt-4.0-aswin-v2` | Training active  (LoRA C,D matrices)(Transfer Pricing - Intagibles                          |
+| Promote                     | Prod        | `gpt-4.0-aswin-v2` | Becomes new inference model (LoRA adapters v2)                |
 
 
 Just pay attention to this concept as this will be used later in calculating loss in GRPO Policy Model. **Ref:** https://github.com/aswinaus/Reinforcement-Learning/blob/main/Important_Calculating_Loss_in_GRPO.ipynb
