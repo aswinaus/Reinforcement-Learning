@@ -23,7 +23,7 @@ Only the LoRA weights are trained, while the base GPT weights stay frozen.
 
 The RL loop computes a reward signal (e.g., classification accuracy, helpfulness, domain fit) and uses it to update LoRA adapters — not the full model.
 
-This way, you adapt the model to your domain using very few trainable parameters, keeping compute and cost low while achieving strong task specialization.
+This way, we adapt the model to our domain using very few trainable parameters keeping compute and cost low while achieving strong task specialization.
 
 Typical versioned model lifecycle
 
@@ -35,7 +35,9 @@ Typical versioned model lifecycle
 | Promote                     | Prod        | `gpt-4.0-aswin-v2` | Becomes new inference model (LoRA adapters v2)                |
 
 
-Just pay attention to this concept as this will be used later in calculating loss in GRPO Policy Model. **Ref:** https://github.com/aswinaus/Reinforcement-Learning/blob/main/Important_Calculating_Loss_in_GRPO.ipynb
+Just pay attention to this concept as this will be used later in calculating loss in GRPO Policy Model.
+
+**Ref:** https://github.com/aswinaus/Reinforcement-Learning/blob/main/Important_Calculating_Loss_in_GRPO.ipynb
 
 
 
