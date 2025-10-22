@@ -1,5 +1,4 @@
 # Reinforcement Learning
-
 **Intrinsic Dimensions**:
 
 **What are Intrinsic Dimensions and its importance in RL?​**
