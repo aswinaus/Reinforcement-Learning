@@ -24,7 +24,7 @@ The RL loop computes a reward signal (e.g., classification accuracy, helpfulness
 
 This way, we adapt the model to our domain using very few trainable parameters keeping compute and cost low while achieving strong task specialization.
 
-Typical versioned model lifecycle
+**Typical versioned model lifecycle**
 
 | Phase                       | Environment | Model              | Status                                     |
 | --------------------------- | ----------- | ------------------ | -------------------------------------------|
