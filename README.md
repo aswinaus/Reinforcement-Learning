@@ -86,33 +86,48 @@ trainer = Trainer(
 **Make a small validation set (e.g., 10–20%):**
 
 dataset = Dataset.from_list(train_data).train_test_split(test_size=0.15, seed=42)
+
 tokenized_train = dataset["train"].map(preprocess_function, batched=True)
+
 tokenized_val   = dataset["test"].map(preprocess_function, batched=True)
 
 **Targets to look for**
 
 If val loss keeps dropping and F1_macro climbs past ~0.70+, keep training.
+
 If val loss stops improving for ~3 evals, stop (early stopping will do it).
+
 If training loss ↓ but val loss ↑, you’re overfitting → reduce epochs or lower LR (e.g., 1e-5) and add weight_decay.
+
 If progress stalls
 Try more data per class (class balance matters).
+
 Slightly lower LR (1e-5) or increase warmup_ratio.
+
 Increase batch size if GPU permits (stabilizes training).
+
 Check text length—keep max_length=256 unless your chunks are longer.
+
 
 **Note:**
 **F1_macro** is the macro-averaged F1 score. It is the unweighted mean of the F1 scores computed independently for each class(Problem, Solution, Topic, Tax Year) in a multi-class classification problem.
 
 **Why is it important?**
 It treats all classes equally, regardless of their frequency in the dataset.
+
 It is especially useful when you have class imbalance, as it does not let dominant classes overshadow minority classes.
+
 It provides a single metric that reflects the model’s ability to correctly classify all classes, not just the most common ones.
-In your code:
-You use f1_macro as the metric for early stopping and model selection, ensuring your model performs well across all tax-related categories, not just the majority class.
+
+**In our code:**
+We are using f1_macro as the metric for early stopping and model selection, ensuring your model performs well across all tax-related categories, not just the majority class.
 
 Current loss (1.11) shows learning, but it’s not “done.”
+
 Add validation + metrics, keep training until val loss/metrics converge.
+
 Expect clear gains with another 1–3 epochs and proper early stopping.
+
 
 **After further training**
 
