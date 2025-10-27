@@ -33,10 +33,91 @@ This way, we adapt the model to our domain using very few trainable parameters k
 | Retraining (6 months later) | Non-Prod    | `gpt-4.0-aswin-v2` | Training active  (LoRA C,D matrices)(Transfer Pricing - Intagibles                          |
 | Promote                     | Prod        | `gpt-4.0-aswin-v2` | Becomes new inference model (LoRA adapters v2)                |
 
-
 Just pay attention to this concept as this will be used later in calculating loss in GRPO Policy Model.
 
 **Ref:** https://github.com/aswinaus/Reinforcement-Learning/blob/main/Important_Calculating_Loss_in_GRPO.ipynb
+
+**Training and Fine Tuning**
+
+from sklearn.metrics import accuracy_score, f1_score
+from datasets import load_dataset
+import numpy as np
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = np.argmax(logits, axis=-1)
+    return {
+        "accuracy": accuracy_score(labels, preds),
+        "f1_macro": f1_score(labels, preds, average="macro")
+    }
+
+
+**Add evaluation + early stopping**
+
+training_args = TrainingArguments(
+    output_dir="/dbfs/tmp/e5_finetuned_tax_classifier",
+    num_train_epochs=5,                  # increase a bit
+    per_device_train_batch_size=8,
+    learning_rate=2e-5,
+    weight_decay=0.01,
+    warmup_ratio=0.06,
+    logging_steps=10,
+    evaluation_strategy="steps",
+    eval_steps=50,                       # evaluate regularly
+    save_steps=50,
+    save_total_limit=2,
+    load_best_model_at_end=True,
+    metric_for_best_model="f1_macro",
+    greater_is_better=True,
+    report_to="none"
+)
+
+from transformers import EarlyStoppingCallback
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_train,
+    eval_dataset=tokenized_val,          # <-- add a small validation split
+    tokenizer=tokenizer,
+    compute_metrics=compute_metrics,
+    callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+)
+
+**Make a small validation set (e.g., 10–20%):**
+
+dataset = Dataset.from_list(train_data).train_test_split(test_size=0.15, seed=42)
+tokenized_train = dataset["train"].map(preprocess_function, batched=True)
+tokenized_val   = dataset["test"].map(preprocess_function, batched=True)
+
+**Targets to look for**
+
+If val loss keeps dropping and F1_macro climbs past ~0.70+, keep training.
+If val loss stops improving for ~3 evals, stop (early stopping will do it).
+If training loss ↓ but val loss ↑, you’re overfitting → reduce epochs or lower LR (e.g., 1e-5) and add weight_decay.
+If progress stalls
+Try more data per class (class balance matters).
+Slightly lower LR (1e-5) or increase warmup_ratio.
+Increase batch size if GPU permits (stabilizes training).
+Check text length—keep max_length=256 unless your chunks are longer.
+
+**Note:**
+**F1_macro** is the macro-averaged F1 score. It is the unweighted mean of the F1 scores computed independently for each class(Problem, Solution, Topic, Tax Year) in a multi-class classification problem.
+
+**Why is it important?**
+It treats all classes equally, regardless of their frequency in the dataset.
+It is especially useful when you have class imbalance, as it does not let dominant classes overshadow minority classes.
+It provides a single metric that reflects the model’s ability to correctly classify all classes, not just the most common ones.
+In your code:
+You use f1_macro as the metric for early stopping and model selection, ensuring your model performs well across all tax-related categories, not just the majority class.
+
+Current loss (1.11) shows learning, but it’s not “done.”
+Add validation + metrics, keep training until val loss/metrics converge.
+Expect clear gains with another 1–3 epochs and proper early stopping.
+
+**After further training**
+
+<img width="478" height="162" alt="image" src="https://github.com/user-attachments/assets/a67c8b66-2639-4ee4-92a5-4189860c7c2e" />
+
 
 
 
