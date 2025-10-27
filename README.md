@@ -133,9 +133,6 @@ Expect clear gains with another 1–3 epochs and proper early stopping.
 
 <img width="478" height="162" alt="image" src="https://github.com/user-attachments/assets/a67c8b66-2639-4ee4-92a5-4189860c7c2e" />
 
-
-
-
 **Practice:**
 Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden units → 10 output units (digits 0–9) on MNIST dataset of handwritten digits, commonly used for classification Each image is 28×28 pixels, grayscale in random low-dimensional subspaces t’s the core idea behind intrinsic dimension. We compute the gradient of the loss with respect to all parameters (e.g., 100,000+ weights).Then you update each parameter individually using the gradient (standard SGD or Adam). But here’s what we do differently to measure models intrinsic dimensionality — how many directions in weight space are truly needed to learn the task. We measure test accuracy at various subspace sizes. Plots Accuracy vs Subspace Dimension — giving a rough estimate of intrinsic dimensionality. Instead of Updating parameters in the full-dimensional space (e.g., all 100,000 directions) we pick a random subset of directions (say just 1,000) and only allow weight updates in that subspace. And how we do it we generate a random projection matrix it maps gradients to and from a smaller-dimensional space. ink of it as Compressing the gradient → updating in this compressed space → projecting back to update the full weights. This means we're training the model as if it only had 1,000 degrees of freedom, not 100,000 and the reason doing this is to test how many directions (dimensions) are actually needed to train the model well and As we increase the size of the subspace, performance improves until it plateaus. The point where performance kicks in is a proxy for the intrinsic dimension the number of directions that actually matter for learning.
 
