@@ -11,7 +11,7 @@ Intrinsic dimensions refer to the smallest number of parameters needed for a mac
 
 **Better Fine-Tuning:** Large models that have already been pre-trained are easier to fine-tune because their intrinsic dimension is already reduced. This means they can adapt to new tasks using less data.​
 
-**LoRA Technology:** The concept of intrinsic dimensions is also the foundation of Low-Rank Domain Adaptation (LoRA), a method that adapts LLMs to specific tasks or domains quickly and efficiently—without needing tons of new data. “Instead of retraining the whole model, insert a small number of trainable matrices inside it that learn how to adapt to your domain — while keeping the base model frozen. So we don’t touch the original GPT weights — we inject lightweight layers (low-rank matrices) into key parts of the network (typically attention projections).
+**LoRA Technology:** The concept of intrinsic dimensions is also the foundation of Low-Rank Domain Adaptation (LoRA), a method that adapts LLMs to specific tasks or domains quickly and efficiently—without needing tons of new data. “Instead of retraining the whole model insert a small number of trainable matrices inside it that learn how to adapt to your domain — while keeping the base model frozen. So we don’t touch the original GPT weights — we inject lightweight layers (low-rank matrices) into key parts of the network (typically attention projections).
 
 **Explanation of the flow:**
 Before Injection: The Transformer layer has its standard linear → activation path.
