@@ -108,8 +108,8 @@ Increase batch size if GPU permits (stabilizes training).
 
 Check text length—keep max_length=256 unless your chunks are longer.
 
-
 **Note:**
+
 **F1_macro** is the macro-averaged F1 score. It is the unweighted mean of the F1 scores computed independently for each class(Problem, Solution, Topic, Tax Year) in a multi-class classification problem.
 
 **Why is it important?**
