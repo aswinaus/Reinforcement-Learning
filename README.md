@@ -298,8 +298,11 @@ For complex tax domain content, rule-based string matching is insufficient — y
 **The solution is to use Azure's multi-grader architecture:**
 
 ** Component |    Type |       What it evaluates | Method **
+
  Structural grader | python | JSON validity, field presence, reference, count, tax year format | Rules + regex
+ 
  Semantic grader    | score_model | Substantive accuracy, completness, tax framing, clarity    | LLM as judge(gpt-4o)
+ 
  Combined reward    | multi | Weighted sum of both |    Formula
 
  
