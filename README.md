@@ -137,6 +137,252 @@ Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden u
 
 **Source:** [https://colab.research.google.com/drive/1kFCflChjvyRtiIxh9YIKWh4IrP3Qa5Iy#scrollTo=rddIp8x3Vh8r](https://github.com/aswinaus/Reinforcement-Learning/blob/main/Intrinsic_Dimension_Estimate.ipynb)
 
+------------------------------------------------------------------------------------------------------------------
+
+Reinforcement Learning Implementation for Asset validation based on the feedback recieved from users.
+
+ 
+
+**What is Grader in Reinforcement?**
+
+RFT setup (like what you're building), the grader is inspired by user feedback, but not a direct translation of raw feedback. So “Grader = formalized, scalable interpretation of user feedback”
+
+ 
+
+**User feedback = raw signal (unstructured). This includes:**
+
+               • 👍 / 👎 ratings
+
+               • Comments like:
+
+                              ○ “missed deductions”
+
+                              ○ “hallucinated tax rule”
+
+                              ○ “too verbose”
+
+                              ○ “wrong entity classification”
+
+👉 This is noisy, inconsistent, and not directly usable
+
+ 
+
+**2) Convert feedback → structured evaluation dimensions.**
+
+ 
+
+               👉 This step is human-designed, not automatic
+
+               User Feedback             Converted Dimension
+
+               “wrong classification”             classification_accuracy
+
+               “missed edge cases”               completeness
+
+               “hallucinated content”           factuality
+
+               “too verbose” conciseness
+
+               “hard to follow”           reasoning_quality
+
+ 
+
+ 
+
+    3) Grader = executable form of those dimensions
+
+               Now you create a grader that can score each dimension programmatically. Example:
+
+               Python
+
+               reward = (
+
+               0.4 * classification_accuracy +
+
+               0.3 * factuality +
+
+               0.2 * completeness +
+
+               0.1 * structure_score
+
+               )
+
+               And each component is implemented via:
+
+                              • rules
+
+                              • regex checks
+
+                              • LLM-based grading
+
+                              • reference comparisons
+
+              
+
+               4) **Best Practices**
+
+                              a) Define clear scoring rubric
+
+                             
+
+                              Factuality:
+
+                                1.0 = no hallucinations
+
+                                0.5 = minor inaccuracies
+
+                                0.0 = major incorrect info
+
+                              Completeness:
+
+                                1.0 = all relevant tax items covered
+
+                                0.5 = partial
+
+                                0.0 = major gaps
+
+                              b) Build robust grader
+
+                                             • tolerant to format variations
+
+                                             • partial scoring (not binary)
+
+                                             • fallback handling
+
+                              c) Validate grader quality
+
+                              Before training:
+
+                                             • Run grader on:
+
+                                                            ○ good outputs
+
+                                                            ○ bad outputs
+
+                              👉 Ensure score separation is meaningful
+
+                             
+
+ 
+
+**Metrics:**
+
+a) Flat validation reward
+
+👉 Likely cause:
+
+               • Grader does not capture meaningful improvements
+
+This happens when:
+
+               • Reward is too coarse
+
+               • OR dimensions don’t reflect actual user satisfaction
+
+ 
+
+ 
+
+-----------------------------------------------------------------------------------------------------------
+
+**Solution:**
+
+ 
+
+ 
+
+For complex tax domain content, rule-based string matching is insufficient — you need LLM-as-a-judge for semantic dimensions. But there's a critical constraint: Azure's Python grader sandbox has no network access, so you can't call an LLM from inside a type: "python" grader.
+
+ 
+
+The solution is to use Azure's multi-grader architecture:
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+**Reward formula:**
+
+ 
+
+ 
+
+reward = (
+
+    0.15 * structure_score +        # Python grader: JSON valid, all fields present
+
+    0.35 * classification_accuracy + # Model grader: Asset + Client_Issue correct
+
+    0.25 * factuality +             # Model grader: no hallucination vs source
+
+    0.15 * completeness +           # Model grader: Tax_Years, References captured
+
+    0.10 * professional_quality     # Model grader: tax-domain framing, clarity
+
+)
+
+ 
+
+ 
+
+**Penalties (applied inside model grader prompt):**
+
+               • Missing references → -0.25
+
+               • Wrong classification (is_approved=False pattern) → -0.35
+
+               • Hallucinated content not in source → -0.30
+
+   
+
+              
+
+ 
+
+**review_comment integration:** During dataset creation, parse each review_comment into a weak_dimension tag stored in item. The model grader prompt then instructs: "Pay special attention to {weak_dimension} for this example."
+
+   
+
+ 
+
+**A multi grader combining Python (structural) + score_model (LLM-as-judge) is the right approach. The Python grader sandbox cannot make API calls, so all semantic evaluation must go through Azure's native score_model grader type.**
+
+ 
+
+For review_comment integration: During dataset creation (cell 13), we'd add review_comment and is_approved into each training example's reference fields. The model grader prompt then says:
+
+ 
+
+"The human reviewer flagged: '{review_comment}'. The asset was {REJECTED/APPROVED}. Score whether the model's output addresses this feedback."
+
+ 
+
+This way gpt-4o judges each generated output in context of what the human actually cared about — wrong classification gets penalized on accuracy, missing references gets penalized on completeness, etc.
+
+ 
+
+ 
+
+**Penalties baked into the model grader prompt:**
+
+ 
+
+               • No references → strong factuality/completeness penalty
+
+               • is_approved=False pattern detected → evaluate whether the model repeats the same mistake flagged in review_comment
+
+------------------------------------------------------------------------------------------------------------------
+
 
 ## Algorithms for Reinforcement Learning
 
