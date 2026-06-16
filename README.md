@@ -181,7 +181,7 @@ RFT setup (like what you're building), the grader is inspired by user feedback, 
 
                “hallucinated content”           factuality
 
-               “too verbose” conciseness
+               “too verbose”                    conciseness
 
                “hard to follow”           reasoning_quality
 
@@ -295,9 +295,12 @@ For complex tax domain content, rule-based string matching is insufficient — y
 
  
 
-The solution is to use Azure's multi-grader architecture:
+**The solution is to use Azure's multi-grader architecture:**
 
- 
+** Component |    Type |       What it evaluates | Method **
+ Structural grader | python | JSON validity, field presence, reference, count, tax year format | Rules + regex
+ Semantic grader    | score_model | Substantive accuracy, completness, tax framing, clarity    | LLM as judge(gpt-4o)
+ Combined reward    | multi | Weighted sum of both |    Formula
 
  
 
