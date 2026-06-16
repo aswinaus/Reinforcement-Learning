@@ -1,6 +1,5 @@
 # Reinforcement Learning
 **Intrinsic Dimensions**:
-
 **What are Intrinsic Dimensions and its importance in RL?​**
 
 Intrinsic dimensions refer to the smallest number of parameters needed for a machine learning model to perform well. “Instead of retraining the whole model, insert a small number of trainable matrices inside it that learn how to adapt to your domain — while keeping the base model frozen.”Instead of assuming every parameter is equally important, this idea suggests that only a carefully chosen subset really matters for optimal results.​
