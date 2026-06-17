@@ -138,15 +138,198 @@ Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden u
 **Source:** [https://colab.research.google.com/drive/1kFCflChjvyRtiIxh9YIKWh4IrP3Qa5Iy#scrollTo=rddIp8x3Vh8r](https://github.com/aswinaus/Reinforcement-Learning/blob/main/Intrinsic_Dimension_Estimate.ipynb)
 
 ------------------------------------------------------------------------------------------------------------------
+## Algorithms for Reinforcement Learning
 
-**Reinforcement Learning Implementation for Asset validation based on the feedback recieved from users.**
+
+## Reinforcement Learning with Human Feedback
+
+# Dataset for Model Learning v2.0 (Reinforcement Fine-Tuning)
+
+Prepares **training** and **validation** datasets for Azure OpenAI **Reinforcement Fine-Tuning (RFT)** of `o4-mini` using a **multi-grader architecture** (RLAIF pattern).
+
+## Architecture: RLAIF with Human Reference Data
+
+**Pattern:** Human reviewer (ground truth) → gpt-4o (judge) → o4-mini (student)
+
+- o4-mini generates its own outputs during training
+- A **structural Python grader** validates JSON format and required fields
+- A **semantic gpt-4o grader** scores quality against human-corrected reference
+- Final reward: `0.15 × structural + 0.85 × semantic`
+
+## Data Sources
+
+- `hive_metastore.default.ab_asset` — Delta table with human-corrected fields and raw LLM output
+- `redacted_adls_path` column → redacted source document text in ADLS (parquet)
+- `Asset_Creation_Tax_V7.4.10` — System prompt used during asset creation
+- `cleanup_asset_json` notebook — `extract_analysis_results()` pattern for parsing `asset_json`
+
+## RFT Training Format (JSONL)
+
+```json
+{
+  "messages": [{"role": "user", "content": "<system prompt>\n\n<source document>"}],
+  "Asset": "<human-corrected, cleaned>",
+  "Client_issue": "<human-corrected, cleaned>",
+  "AB_IP_generated": "<human-corrected, cleaned>",
+  "Tax_years": "2024",
+  "References": ["Art 10(3)", "WHT Act 2021"],
+  "original_model_Asset": "<extracted from asset_json via extract_analysis_results()>",
+  "original_model_Client_issue": "<extracted from asset_json>",
+  "original_model_AB_IP_generated": "<extracted from asset_json>",
+  "review_comment": "<human reviewer feedback>",
+  "approval_status": "approved|rejected|unreviewed"
+}
+```
+
+## Column Mapping
+
+| Source | Field | Purpose |
+| --- | --- | --- |
+| ab_asset columns | `Asset`, `Client_Issue`, `AB_Analysis`, `Tax_Years`, `References` | Human-corrected reference (ground truth) |
+| ab_asset `asset_json` | Extracted via `extract_analysis_results()` → `Asset`, `Client_issue`, `AB_IP_generated` | Original model output (before correction) |
+| ab_asset `redacted_adls_path` | Parquet path to source document | Input text for model |
+| ab_asset `is_approved` | `True` / `False` | Reviewer approval signal |
+| ab_asset `review_comment` | Free text | Reviewer feedback for semantic grader |
+
+## Data Cleaning (from `cleanup_asset_json`)
+
+- `extract_analysis_results()` — Unwraps `{ok, text: "<json>"}` envelope, strips markdown fences, extracts `analysis_results[0]`
+- `clean_value()` — Removes bullet-point formatting (`\n•`, `\n-`, `\n*`), collapses whitespace, recursively cleans lists/dicts
+
+## What Happens During Training (RFT Loop)
+
+During reinforcement fine-tuning, Azure OpenAI runs a repeated loop for each training example across multiple epochs:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  FOR EACH TRAINING EXAMPLE:                                         │
+│                                                                     │
+│  1. INPUT: o4-mini receives the source document + system prompt     │
+│     (from the "messages" field in the JSONL)                        │
+│                                                                     │
+│  2. GENERATE: o4-mini produces a NEW tax asset analysis             │
+│     (JSON with Asset, Client_issue, AB_IP_generated, etc.)          │
+│     This output is different every time — the model is exploring.   │
+│                                                                     │
+│  3. STRUCTURAL GRADER (Python, runs in Azure sandbox):              │
+│     Receives: o4-mini's new output                                  │
+│     Checks: Is it valid JSON? Are the 5 KH fields present?          │
+│     Returns: 0.0–1.0 format score                                   │
+│                                                                     │
+│  4. SEMANTIC GRADER (gpt-4o, runs as score_model):                  │
+│     Receives:                                                       │
+│       • Human-corrected reference (our ground truth columns)        │
+│       • Original model output (what o4-mini generated BEFORE        │
+│         human correction — extracted from asset_json)                │
+│       • Reviewer comments + approval status                         │
+│       • o4-mini's NEW output (from step 2)                          │
+│     Evaluates: How close is the new output to human ground truth?   │
+│     Returns: 0.0–1.0 quality score                                  │
+│                                                                     │
+│  5. REWARD = 0.15 × structural + 0.85 × semantic                    │
+│                                                                     │
+│  6. UPDATE: Azure uses this reward to adjust o4-mini's weights      │
+│     High reward → reinforce this behavior (do more of this)         │
+│     Low reward → discourage this behavior (do less of this)         │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Key clarification:** gpt-4o is NOT generating a competing response. It is purely the **judge**. It reads o4-mini's new output and scores it against the human ground truth we provide in the training data. The three-way comparison in the semantic grader prompt (human reference vs original model output vs new model output) gives gpt-4o the full context to assess whether the student model is improving, regressing, or hallucinating.
+
+**Why include the original model output?** It shows gpt-4o what o4-mini got WRONG before human correction. If the new output repeats the same mistakes, gpt-4o can penalise appropriately. If the new output fixes those mistakes (aligning with the human correction), it gets rewarded.
+
+**Why can't we just use the existing `asset_json` output instead of generating new ones?**
+
+The `asset_json` column already contains what o4-mini originally generated for each source document. So why not just score that directly instead of making the model generate again? Because that would be **Supervised Fine-Tuning (SFT)**, not Reinforcement Fine-Tuning:
+
+| Approach | How it works | Limitation |
+| --- | --- | --- |
+| **SFT** (show correct answer) | "Here's the input, here's what you should output" — model learns to copy | Memorises specific answers. Doesn't learn WHY an answer is good. Brittle on unseen documents. |
+| **DPO** (our v1 approach) | "Here's a good output and a bad output — prefer the good one" | Better than SFT, but still learns from fixed examples. Limited exploration. |
+| **RFT** (current approach) | Model generates its OWN output, gets scored, adjusts weights based on reward | Learns the underlying principles. Explores the space of possible outputs. Generalises to new documents. |
+
+During RFT, the model's weights change after every update. So the output it produces in epoch 2 is different from epoch 1, which is different from the original `asset_json`. The training loop needs to evaluate the model's **current** behavior (what it generates NOW with updated weights), not its historical behavior. This exploration is what teaches o4-mini to reason toward good outputs rather than just memorising 10 correct answers.
+
+The `asset_json` original output is still used — but as context for the **judge** (gpt-4o), not as the thing being scored. It tells the judge: "here's what the model used to get wrong, check if it's still making the same mistakes."
+
+## Why Multi-Grader Architecture?
+
+**But before that what is Grader in Reinforcement?**
+
+In RFT setup, the grader is inspired by user feedback but not a direct translation of raw feedback. So “Grader = formalized, scalable interpretation of user feedback”
+
+**Now let me explain why we chose Multi-Grader Architecture?**
+
+We evolved through three iterations to arrive at this design. The initial approach used a single Python grader with string-comparison scoring (exact match and substring containment between model output and human reference). This failed at scale with **23% runtime errors** (`exit_code=202`, `FileNotFoundError`) because the grader could not reliably parse the variety of output formats the model produces during training — raw JSON, `{ok, text: "..."}` wrappers, markdown-fenced blocks, and preamble text before the JSON. A hardened parser alone was insufficient because string comparison is semantically blind: two outputs can express the same tax analysis in different words and score 0.0. Conversely, a model can copy surface tokens while hallucinating facts and score 1.0. The multi-grader separates these concerns: the **structural grader** answers "is this valid, well-formed output?" (cheap, deterministic, never crashes), while the **semantic grader** answers "is this correct, complete, and aligned with the human reviewer?" (expensive but semantically aware). This also mirrors the knowledge hierarchy: deterministic validation gates the reward signal so that gpt-4o only judges outputs that are at least structurally sound.
+
+## Multi-Grader Architecture
+
+### Structural Grader (Python, weight 0.15)
+- No file I/O, no external dependencies
+- 3-fallback JSON parser: direct parse → regex extraction → brace-balancing
+- Handles: raw JSON, `{ok, text}` wrapper, `analysis_results[]` wrapper, markdown fences
+- Scoring: JSON parseable (0.30) + fields present (0.30 × N/5) + references valid (0.20) + tax year valid (0.20)
+- Signal encoding: `0.0` = unparseable, `0.01` = no KH fields, `0.02–0.99` = partial, `1.0` = perfect
+
+### Semantic Grader (gpt-4o score_model, weight 0.85)
+- Evaluates model output against human-corrected reference
+- Receives: human reference, original model output (from `asset_json`), reviewer comments + approval status
+- Returns a single score 0.0–1.0
+
+**Reward Calculation — Evaluation Dimensions:**
+
+The semantic grader converts reviewer feedback and reference comparison into five structured evaluation dimensions, each with a defined weight:
+
+| Reviewer Feedback Pattern | Evaluation Dimension | Weight |
+| --- | --- | --- |
+| "wrong classification", Asset/Client_issue mismatch | `classification_accuracy` | 35% |
+| "hallucinated content", facts not in source reference | `factuality` | 25% |
+| "missed edge cases", missing references, incomplete analysis | `completeness` | 20% |
+| "too verbose", unclear language, poor tax-domain framing | `professional_quality` | 10% |
+| Reviewer rejected with specific comments not addressed | `reviewer_alignment` | 10% |
+
+**Penalty Deductions (hard caps):**
+
+| Penalty Trigger | Score Deduction |
+| --- | --- |
+| Wrong classification (model's Asset name / Client_issue does not match human reference) | −0.35 |
+| Hallucinated facts not present in the human-corrected AB_IP_generated | −0.30 |
+| Missing references that appear in the human version | −0.25 |
+| Ignoring reviewer feedback (reviewer rejected and gave specific comments that are unaddressed) | −0.20 |
+
+**How it works:** gpt-4o receives the human-corrected reference fields, the original model output (extracted from `asset_json` via `extract_analysis_results()`), reviewer comments, and the new model output to score. It evaluates how close the new output is to the human ground truth across all five dimensions, applies penalties for critical failures, and returns a single decimal score. This score is weighted at 0.85 in the final reward formula.
+
+## Pre-Training Grader Validation
+
+Before submitting the fine-tuning job, we validate the structural grader locally by running it against a suite of synthetic test cases that represent the full spectrum of model outputs — from perfect to completely broken. This ensures the grader behaves predictably and will not crash or produce misleading scores during training (which would corrupt the reward signal).
+
+The test suite covers:
+
+| Test Case | Input | Expected Score | What it validates |
+| --- | --- | --- | --- |
+| Perfect output | Valid JSON with all 5 KH fields, valid tax year, references list | 1.00 | Grader correctly rewards well-formed output |
+| Unparseable garbage | Plain text, no JSON structure | 0.00 | Grader returns zero (not crash) for broken output |
+| JSON but no KH fields | Valid JSON like `{"foo": "bar"}` with none of the required fields | 0.01 | Distinguishes "valid JSON, wrong content" from unparseable |
+| Wrapped in `{ok, text}` | Double-encoded JSON inside the pipeline wrapper | 0.90–1.00 | `extract_analysis_results()` pattern correctly unwraps nested envelopes |
+| Missing refs and tax_years | Valid JSON with only 3 of 5 fields, no references or tax year | 0.30–0.70 | Partial credit scales correctly with field coverage |
+| Markdown fenced | JSON wrapped in ` ```json ... ``` ` fences | 0.90–1.00 | Fence stripping works before parsing |
+
+If any test case scores outside its expected range, the cell raises an `AssertionError` and blocks submission — preventing a broken grader from being sent to Azure OpenAI where it would cause the 20% runtime error threshold to be exceeded (as happened in v1).
+
+This validation step is what prevents the `exit_code=202` / `FileNotFoundError` failures we saw in earlier iterations: the grader is proven crash-proof against every known output format before it ever runs at scale during training.
+
+## Output Location
+
+ADLS `stage` container → `fine-tuning/dpo/<timestamp>/train.jsonl` + `validation.jsonl`
+
+## Authentication
+
+OAuth2 via Service Principal (`keyvault-secret-scope`)
  
 
-**What is Grader in Reinforcement?**
+----------------------------------------------------------------------------------------------------------------------------------------------------
 
-RFT setup, the grader is inspired by user feedback but not a direct translation of raw feedback. So “Grader = formalized, scalable interpretation of user feedback”
-
- 
+**Implementation:**
 
 **User feedback = raw signal (unstructured). This includes:**
 
@@ -388,11 +571,6 @@ This way gpt-4o judges each generated output in context of what the human actual
 
 ------------------------------------------------------------------------------------------------------------------
 
-
-## Algorithms for Reinforcement Learning
-
-
-## Reinforcement Learning with Human Feedback
 ## Direct Policy Optimization(DPO)
 
 ## Group Relative Policy Optimization(GRPO)
