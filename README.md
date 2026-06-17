@@ -139,13 +139,12 @@ Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden u
 
 ------------------------------------------------------------------------------------------------------------------
 
-Reinforcement Learning Implementation for Asset validation based on the feedback recieved from users.
-
+**Reinforcement Learning Implementation for Asset validation based on the feedback recieved from users.**
  
 
 **What is Grader in Reinforcement?**
 
-RFT setup (like what you're building), the grader is inspired by user feedback, but not a direct translation of raw feedback. So “Grader = formalized, scalable interpretation of user feedback”
+RFT setup, the grader is inspired by user feedback but not a direct translation of raw feedback. So “Grader = formalized, scalable interpretation of user feedback”
 
  
 
