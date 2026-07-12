@@ -139,12 +139,9 @@ Train a basic Multi-Layer Perceptron(MLP) Input (28×28 pixels) → 100 hidden u
 
 ------------------------------------------------------------------------------------------------------------------
 ## Algorithms for Reinforcement Learning
-
-
 ## Reinforcement Learning with Human Feedback
 
-# Dataset for Model Learning v2.0 (Reinforcement Fine-Tuning)
-
+# Dataset for Model Learning v2.0 (Reinforcement Fine-Tuning) - Azure 
 Prepares **training** and **validation** datasets for Azure OpenAI **Reinforcement Fine-Tuning (RFT)** of `o4-mini` using a **multi-grader architecture** (RLAIF pattern).
 
 ## Architecture: RLAIF with Human Reference Data
